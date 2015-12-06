@@ -1,0 +1,29 @@
+{
+  "name": "node-smpp-server",
+  "version": "1.0.0",
+  "description": "Basic Nodejs smpp server",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^10.0.0",
+    "rabbit-driver": "github:pterwin/rabbit-driver",
+    "smpp": "^0.2.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pterwin/node-smpp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pterwin/node-smpp-server/issues"
+  },
+  "homepage": "https://github.com/pterwin/node-smpp-server#readme"
+}
