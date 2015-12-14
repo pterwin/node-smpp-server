@@ -1,4 +1,4 @@
-var logger       = new (require('logger'))('test-sendsms');
+var logger       = new (require('logger'))('smpp-http-api');
 var AmqpMessage  = require('rabbit-driver').AmqpMessage;
 var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
 
