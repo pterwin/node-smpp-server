@@ -1,6 +1,7 @@
 var logger       = new (require('logger'))('smpp-http-api');
 var AmqpMessage  = require('rabbit-driver').AmqpMessage;
 var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
+var uuid = require('uuid');
 
 
 (function() {
@@ -47,12 +48,14 @@ var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
                 }
 
                 var defaults = {
-                    source_addr_ton    : 1,
-                    source_addr_npi    : 1,
-                    dest_addr_ton      : 5,
-                    dest_addr_npi      : 0,
-                    source_network_type: 1,
-                    dest_network_type  : 1,
+                    source_addr_ton     : 1,
+                    source_addr_npi     : 1,
+                    dest_addr_ton       : 5,
+                    dest_addr_npi       : 0,
+                    source_network_type : 1,
+                    dest_network_type   : 1,
+                    receipted_message_id: uuid.v4(),
+                    message_state       : 2
                 };
 
                 var job = {};
