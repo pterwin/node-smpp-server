@@ -17,7 +17,8 @@
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "rabbit-driver": "git+ssh://git@github.com:pterwin/rabbit-driver.git",
-    "smpp": "^0.2.0"
+    "smpp": "^0.2.0",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {},
   "repository": {
