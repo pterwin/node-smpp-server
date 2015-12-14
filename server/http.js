@@ -1,6 +1,6 @@
 var logger  = new (require('logger'))('smpp-http-api');
 var config  = require('../config/config');
-var modules = ['sendsms'];
+var modules = ['mo'];
 var _       = require('lodash');
 
 (function() {

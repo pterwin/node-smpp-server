@@ -30,7 +30,7 @@ var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
 
         server.route({
             method: 'GET',
-            path:'/cgi-bin/sendsms',
+            path:'/sms/mo?',
             handler: function (request, reply) {
                 var params = request.query;
                 logger.info('got message', params);
