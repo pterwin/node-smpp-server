@@ -16,7 +16,7 @@
     "hapi": "^10.0.0",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
-    "rabbit-driver": "github:pterwin/rabbit-driver",
+    "rabbit-driver": "git+ssh://git@github.com:pterwin/rabbit-driver.git",
     "smpp": "^0.2.0"
   },
   "devDependencies": {},
