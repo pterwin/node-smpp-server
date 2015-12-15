@@ -9,7 +9,7 @@ module.exports = {
             {
                 system_id    : 'YOUR_SYSTEM_ID',
                 password     : 'YOUR_PASSWORD',
-                max_sessions : 1,
+                max_sessions : 8,
                 channel      : 'YOUR_SYSTEM_ID'
             }
         ]
