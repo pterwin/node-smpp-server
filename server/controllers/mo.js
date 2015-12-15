@@ -1,7 +1,7 @@
 var logger       = new (require('logger'))('smpp-http-api');
 var AmqpMessage  = require('rabbit-driver').AmqpMessage;
 var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
-var uuid = require('uuid');
+//var uuid = require('uuid');
 
 
 (function() {
@@ -54,8 +54,9 @@ var uuid = require('uuid');
                     dest_addr_npi       : 0,
                     source_network_type : 1,
                     dest_network_type   : 1,
-                    receipted_message_id: uuid.v4(),
-                    message_state       : 2
+                    // receipted_message_id: uuid.v4(),
+                    // message_state       : 2,
+                    data_coding         : 0
                 };
 
                 var job = {};
