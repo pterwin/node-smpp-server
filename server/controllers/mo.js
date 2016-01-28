@@ -1,33 +1,41 @@
 var logger       = new (require('logger'))('smpp-http-api');
 var AmqpMessage  = require('rabbit-driver').AmqpMessage;
 var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
+var iconv   = require('iconv-lite');
+var detect_message_coding = require('../../lib/Sms').detect_message_coding;
 //var uuid = require('uuid');
 
 
 (function() {
     var SendSMS = function(config, server) {
         var self = this;
-        self.channels = {};
 
+        self.channel  = 'node-smpp-server-mo';
+        var driver = new RabbitDriver(config, {name: self.channel}, false);
 
         self.initChannel = function(name, driver) {
             driver.init().then(function() {
-                logger.info('Initialized mo queue', name);
+                logger.info('initialized rabbit queue', name);
             });
         };
 
-        for(var i in config.server.clients) {
-            var chan = config.server.clients[i].system_id.toLowerCase();
-            self.channels[chan] = {
-                driver: new RabbitDriver(config, {name: chan}, false)
-            };
-        }
+        self.initChannel(self.channel, driver);
 
-        for(var j in self.channels) {
-            self.initChannel(j, self.channels[j].driver);
-        }
+        var required_params = ['from', 'to', 'message', 'channel'];
 
-        var required_params = ['from', 'to', 'message'];
+        server.route({
+            method: 'GET',
+            path:'/sms/test',
+            handler: function(request, reply) {
+                var params = request.query;                
+                var message = unescape(params.message);
+
+                console.log('message recieved from test', message);
+                //logger.info('encoding of incoming message', detect_message_coding());
+                //logger.info('message received', iconv.decode(message, params.charset).toString());
+                reply(params);
+            }
+        });
 
         server.route({
             method: 'GET',
@@ -39,7 +47,7 @@ var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
                 var channel          = params.channel.toLowerCase();
                 var message          = params.message;
                 var destination_addr = params.to;
-                var source_addr      = source_addr;
+                var source_addr      = params.from;
 
                 for(var i in required_params) {
                     if(!params[required_params[i]]) {
@@ -47,37 +55,16 @@ var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
                     }
                 }
 
-                var defaults = {
-                    source_addr_ton     : 1,
-                    source_addr_npi     : 1,
-                    dest_addr_ton       : 5,
-                    dest_addr_npi       : 0,
-                    source_network_type : 1,
-                    dest_network_type   : 1,
-                    // receipted_message_id: uuid.v4(),
-                    // message_state       : 2,
-                    data_coding         : 0
-                };
+                var sms     = {};
+                sms.channel = channel;
+                sms.from    = source_addr;
+                sms.to      = destination_addr;
+                sms.message = message;
 
-                var job = {};
-                for(var j in defaults) {
-                    job[j] = defaults[j];
-                }
-
-                job.source_addr      = params.from;
-                job.destination_addr = params.to;
-                job.message_payload  = message;
-
-                var msg = new AmqpMessage('mo', job);
-
-                if(self.channels[channel]) {
-                    var driver = self.channels[channel].driver || false;
-                    driver.publish(msg);
-                    reply('message queued');
-                } else {
-                    logger.warn('channel', channel, 'not found');
-                    reply('channel not found');
-                }
+                var msg = new AmqpMessage('mo', sms);
+                driver.publish(msg);
+                logger.info('mo queued', channel, source_addr, destination_addr, message);
+                reply('message queued');
             }
         });
     };
