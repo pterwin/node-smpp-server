@@ -1,8 +1,9 @@
-var logger       = new (require('logger'))('smpp-http-api');
-var AmqpMessage  = require('rabbit-driver').AmqpMessage;
-var RabbitDriver = require('rabbit-driver').RabbitDriver.pushworker;
-var iconv   = require('iconv-lite');
+var logger                = new (require('logger'))('smpp-http-api');
+var AmqpMessage           = require('rabbit-driver').AmqpMessage;
+var RabbitDriver          = require('rabbit-driver').RabbitDriver.pushworker;
+var iconv                 = require('iconv-lite');
 var detect_message_coding = require('../../lib/Sms').detect_message_coding;
+var shortid               = require('shortid');
 //var uuid = require('uuid');
 
 
@@ -10,7 +11,7 @@ var detect_message_coding = require('../../lib/Sms').detect_message_coding;
     var SendSMS = function(config, server) {
         var self = this;
 
-        self.channel  = 'node-smpp-server-mo';
+        self.channel  = config.server.mo_channel;
         var driver = new RabbitDriver(config, {name: self.channel}, false);
 
         self.initChannel = function(name, driver) {
@@ -27,7 +28,7 @@ var detect_message_coding = require('../../lib/Sms').detect_message_coding;
             method: 'GET',
             path:'/sms/test',
             handler: function(request, reply) {
-                var params = request.query;                
+                var params = request.query;
                 var message = unescape(params.message);
 
                 console.log('message recieved from test', message);
@@ -42,7 +43,8 @@ var detect_message_coding = require('../../lib/Sms').detect_message_coding;
             path:'/sms/mo',
             handler: function (request, reply) {
                 var params = request.query;
-                logger.info('got message', params);
+                var id = shortid.generate();
+                logger.info(id, 'got message', params);
 
                 var channel          = params.channel.toLowerCase();
                 var message          = params.message;
@@ -56,6 +58,7 @@ var detect_message_coding = require('../../lib/Sms').detect_message_coding;
                 }
 
                 var sms     = {};
+                sms.id      = id;
                 sms.channel = channel;
                 sms.from    = source_addr;
                 sms.to      = destination_addr;
