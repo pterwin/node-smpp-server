@@ -3,7 +3,7 @@ var AmqpMessage           = require('rabbit-driver').AmqpMessage;
 var RabbitDriver          = require('rabbit-driver').RabbitDriver.pushworker;
 var iconv                 = require('iconv-lite');
 var detect_message_coding = require('../../lib/Sms').detect_message_coding;
-var shortid               = require('shortid');
+var uuid               = require('uuid');
 //var uuid = require('uuid');
 
 
@@ -43,13 +43,9 @@ var shortid               = require('shortid');
             path:'/sms/mo',
             handler: function (request, reply) {
                 var params = request.query;
-                var id = shortid.generate();
+                var id = uuid.v4();
                 logger.info(id, 'got message', params);
 
-                var channel          = params.channel.toLowerCase();
-                var message          = params.message;
-                var destination_addr = params.to;
-                var source_addr      = params.from;
 
                 for(var i in required_params) {
                     if(!params[required_params[i]]) {
@@ -57,17 +53,24 @@ var shortid               = require('shortid');
                     }
                 }
 
+                var channel          = params.channel.toLowerCase();
+                var message          = params.message;
+                var destination_addr = params.to;
+                var source_addr      = params.from;
+
+
                 var sms     = {};
                 sms.id      = id;
                 sms.channel = channel;
                 sms.from    = source_addr;
                 sms.to      = destination_addr;
                 sms.message = message;
+                sms.type    = 'mo';
 
                 var msg = new AmqpMessage('mo', sms);
                 driver.publish(msg);
                 logger.info('mo queued', channel, source_addr, destination_addr, message);
-                reply('message queued');
+                reply('ok ' + sms.id);
             }
         });
     };
