@@ -14,9 +14,12 @@
   "license": "ISC",
   "dependencies": {
     "hapi": "^10.0.0",
+    "hexy": "^0.2.7",
+    "iconv-lite": "^0.4.13",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "rabbit-driver": "git+ssh://git@github.com:pterwin/rabbit-driver.git",
+    "shortid": "^2.2.4",
     "smpp": "^0.2.0",
     "uuid": "^2.0.1"
   },
